@@ -1,0 +1,5 @@
+int xx;
+int x;
+short y;
+
+int a(int a, int b);

@@ -50,7 +50,7 @@ void expr2(int k)
 			//±£´æt×´Ì¬
 			char op = t;
 			t = gettok();
-			expr2(k + 1);
+			expr2(k1 + 1);
 			printf("use op %c\n", op);
 			push(op);
 		}

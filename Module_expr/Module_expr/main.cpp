@@ -21,6 +21,6 @@ int main()
 	*/
 	expr test;
 	
-	_DEBUG_PRINT_TREE(test._binary(1));
+	_DEBUG_PRINT_TREE(test.expression());
 	return 0;
 }

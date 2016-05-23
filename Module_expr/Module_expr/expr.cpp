@@ -29,7 +29,36 @@ void _DEBUG_PRINT_TREE(Ptree xx)
 }
 
 #endif
+Ptree expr::expression()
+{
+	Ptree ret = _Euqals();
+	int xx = (*Current_Analysis_File).get_this_tok();
+	if (xx == ',')	//逗号当然先算左边的部分
+	{
+		ret = _CreateNode(',', 0, _Euqals(), ret);
+	}
 
+	return ret;
+}
+Ptree expr::_Euqals()
+{
+	Ptree ret = _binary(1);
+	int xx = (*Current_Analysis_File).get_this_tok();
+	if (xx == '=')
+	{
+		ret = _CreateNode('=', 0, ret, _Euqals());//等号是右结合的！
+	}
+	else if ((_tb[xx] >= 6 && _tb[xx] <= 8) ||
+		(_tb[xx] >= 11 && _tb[xx] <= 13))//copy from LCC
+	{
+		//!!处理 +=  -=  >>= z 暂时不处理
+	}
+	else
+	{
+		//!!error
+	}
+	return ret;
+}
 Ptree expr::_binary(int level)
 {
 	Ptree right = nullptr,left = nullptr,ret = nullptr;
@@ -37,7 +66,6 @@ Ptree expr::_binary(int level)
 	ret = _unary();
 	_Bin_stack.push_back(ret);
 	printf("Push ID \n ");
-	(*Current_Analysis_File).gettok();
 	for (int k1 = _tb[(*Current_Analysis_File).get_this_tok()]; k1 >= level; k1--)
 	{
 		while (_tb[(*Current_Analysis_File).get_this_tok()] == k1)
@@ -113,7 +141,7 @@ Ptree expr::_unary()
 	}
 	else
 	{
-		ret = _unit();
+		ret = _unit();//postfix
 	}
 	return ret;
 }
@@ -136,12 +164,44 @@ Ptree expr::_unit()
 		ret = _CreateNode(0, FLOAT, nullptr, nullptr);
 	}
 	//else
+	ret = _postfix(ret);
+
 	return ret;
 
 }
+Ptree  expr::_postfix(Ptree _unit)//返回时this_token指向下一个operator
+{
+	Ptree ret = _unit;;
+	int xx = (*Current_Analysis_File).gettok();
+	if (xx == INC)
+	{
+
+	}
+	else if (xx == DEC)
+	{
+
+	}
+	else if (xx == '[')
+	{
+		//arrage
+	}
+	else if (xx == '(')
+	{
+		//call
+	}
+	else if (xx == '.')
+	{
+		//struct
+	}
+	else if (xx == DEREF)
+	{
+		//for the '->'
+	}
+	return ret;
+}
 Ptree expr::_CreateNode(int op, int type, Ptree left, Ptree right)
 {
-	Ptree ret = (Ptree)malloc(sizeof(tree));
+	Ptree ret = new tree;
 	ret->op = op;
 	ret->_left = left;
 	ret->_right = right;
@@ -169,7 +229,7 @@ int expr::_DeleteTree(Ptree xx)
 10		左			< > <= >= 				关系
 11		左			  << >>					位移
 12		左			  + -					加
-13		左			 * / %					乘
+13		左			 * /%					乘
 */
 
 _expr_table::_expr_table()

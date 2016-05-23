@@ -18,10 +18,14 @@ private:
 class expr
 {
 public:
-	Ptree _binary(int);
+	Ptree expression();
 private:
+	Ptree _Euqals();
+	Ptree _binary(int);
 	Ptree _unit();
 	Ptree _unary();
+	Ptree _postfix(Ptree);
+
 	
 	Ptree _CreateNode(int op,int type, Ptree left, Ptree right);
 	int _DeleteNode(Ptree xx);

@@ -113,6 +113,7 @@ int lex::_Get_All_token()
 			int token_value = token - '0';
 			while (*src >= '0' && *src <= '9'){ token_value = token_value * 10 + (*src - '0'); ++src; }
 			//printf("num:  %d\n", token_value);
+			Last_Int_Value = token_value;
 			return 35;
 		}
 		else if (token == '"' || token == '\'')
@@ -166,6 +167,7 @@ int lex::_Get_All_token()
 		else if (token == '[')	return '[';
 		else if (token == ']')	return ']';
 		else if (token == ',')	return ',';
+		else if (token == '*')	return '*';
 		else
 		{
 			printf("Error!!! unknow character < %c >  < %x >\n", token, token);

@@ -20,6 +20,7 @@ class expr
 public:
 	Ptree expression();
 private:
+	Ptree _Expr(int);
 	Ptree _Euqals();
 	Ptree _binary(int);
 	Ptree _unit();
@@ -44,3 +45,4 @@ void _DEBUG_PRINT_TREE(Ptree xx);
 #endif
 
 #endif
+//CreateNode 需要被改写成创建常量node 与变量node

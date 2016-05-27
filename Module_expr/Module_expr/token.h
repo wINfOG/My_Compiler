@@ -28,6 +28,10 @@ namespace TOKEN_TO_NUM
 		LONGLONG = 28,
 		//-----
 		ID = 32,
+		FLOAT_CONST = 34,
+		INT_CONST = 35,
+		STRING_CONST = 36,
+
 		INC = 39,
 
 		DEC = 48,

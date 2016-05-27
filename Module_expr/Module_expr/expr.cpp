@@ -9,7 +9,7 @@ void _This_PRINT_TREE(Ptree xx, PjNode _This_PjNode)
 	//printf("Node Level %d Type %d , value %d \n",level,xx->_type,xx->op);
 	//++level;
 	std::stringstream _for_this;
-	_for_this << _Debug_ID_Map[xx->op] << "  \n" << _Debug_ID_Map[xx->_type];
+	_for_this << _Debug_ID_Map[xx->op] << "  \n" << _Debug_ID_Map[xx->_type] << "<br>   \n" << xx->value;
 	_This_PjNode->_in = _for_this.str();
 	if (xx->_left != nullptr)
 	{
@@ -31,13 +31,26 @@ void _DEBUG_PRINT_TREE(Ptree xx)
 #endif
 Ptree expr::expression()
 {
+	return _Expr(-1);
+}
+Ptree expr::_Expr(int _stop_token)
+{
 	Ptree ret = _Euqals();
+	static char stop[] = { IF, ID, 0 };
 	int xx = (*Current_Analysis_File).get_this_tok();
 	if (xx == ',')	//逗号当然先算左边的部分
 	{
 		ret = _CreateNode(',', 0, _Euqals(), ret);
 	}
-
+	if (xx == _stop_token)
+	{
+		(*Current_Analysis_File).gettok();
+		return ret;
+	}
+	else
+	{
+		//skip until the stop token
+	}
 	return ret;
 }
 Ptree expr::_Euqals()
@@ -65,7 +78,7 @@ Ptree expr::_binary(int level)
 	
 	ret = _unary();
 	_Bin_stack.push_back(ret);
-	printf("Push ID \n ");
+	std::cout<< "Push Value :"<< ret->value<<std::endl;
 	for (int k1 = _tb[(*Current_Analysis_File).get_this_tok()]; k1 >= level; k1--)
 	{
 		while (_tb[(*Current_Analysis_File).get_this_tok()] == k1)
@@ -99,45 +112,59 @@ Ptree expr::_unary()
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('*', 0, ret, nullptr);
 	}
 	else if (xx == '&')
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('&', 0, ret, nullptr);
 	}
 	else if (xx == '+')
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('+', 0, ret, nullptr);
 	}
 	else if (xx == '-')
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('-', 0, ret, nullptr);
 	}
 	else if (xx == '~')
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('~', 0, ret, nullptr);
 	}
 	else if (xx == '!')
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('!', 0, ret, nullptr);
 	}
 	else if (xx == INC)
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('+', 0, ret, _CreateNode(0, INT, nullptr, nullptr));// ++a = a+1
 	}
 	else if (xx == DEC)
 	{
 		xx = (*Current_Analysis_File).gettok();
 		ret = _unit();
+		ret = _CreateNode('-', 0, ret, _CreateNode(0, INT, nullptr, nullptr));// --a = a-1
 	}
 	else if (xx == '(')
 	{
 		//类型强制转换暂时不管
+		
+		//优先级通过递归expr加上postfix处理，LCC神奇的设计 great
+		
+		ret = _Expr(')');
+		_Bin_stack.pop_back();//由于括号内会被push一次，需要吐出来
+		printf("00\n");
 	}
 	else
 	{
@@ -152,18 +179,20 @@ Ptree expr::_unit()
 	if (xx == ID)
 	{
 		ret = _CreateNode(0, ID, nullptr, nullptr);
+		ret->value = (*Current_Analysis_File).getLastID();
 		//将ID的符号链接加入tree symbol 中
 	}
-	else if (xx == INT)
+	else if (xx == INT_CONST)
 	{
 		ret = _CreateNode(0, INT, nullptr, nullptr);
+		ret->value = std::to_string((*Current_Analysis_File).getLasrIntValue());
 		//将int的值加入tree value 中
 	}
-	else if (xx == FLOAT)
+	else if (xx == FLOAT_CONST)
 	{
 		ret = _CreateNode(0, FLOAT, nullptr, nullptr);
 	}
-	//else
+	//else string const
 	ret = _postfix(ret);
 
 	return ret;

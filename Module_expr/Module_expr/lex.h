@@ -44,11 +44,13 @@ public:
 	inline int getletral() const { return letral; }
 	inline std::string getLastID() const { return Last_ID_Name; }
 	inline int getLastIDhash() const{ return hash; }
+	inline int getLasrIntValue() const { return Last_Int_Value; }
 	bool _eof;
 private:
 	int _token;
 	int _Get_All_token();
 	std::string Last_ID_Name;
+	long long int Last_Int_Value;
 	int line, letral, hash;
 	Current_Input src;	//source code
 	std::vector<std::string> ID_Map;

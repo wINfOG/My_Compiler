@@ -12,11 +12,16 @@ struct _Tree
 	int _type; // the type in this node 类型是父节点看向子节点的类型
 	Ptree _left;
 	Ptree _right;
+	/*
 	union
 	{
 		Psymbol _Psym;	//对于一个ID需要一个索引
 		int _value;		//其它类型直接记录类型
 	}_u;
+	*/
+
+	//just for this
+	std::string value;
 };
 
 

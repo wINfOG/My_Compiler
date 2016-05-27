@@ -65,7 +65,7 @@ short y;
 int a(int a, int b)
 {
 	int c; 
-	int d;]
+	int d;
     int a;
 };
 ```
